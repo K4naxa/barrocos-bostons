@@ -14,25 +14,32 @@ class DogSeeder extends Seeder
 {
     public function run()
     {
+        // Check for required data
+        // if (Title::count() === 0) {
+        //     throw new \Exception('No titles found. Please run TitleSeeder first.');
+        // }
+        // if (ExaminationType::count() === 0) {
+        //     throw new \Exception('No examination types found. Please run ExaminationTypeSeeder first.');
+        // }
+
         // Create 20 dogs with random relationships
         Dog::factory(20)->create()->each(function ($dog) {
-            // Assign random owners
-            $dog->owners()->attach(
-                User::inRandomOrder()->take(rand(1, 3))->pluck('id'),
-                ['ownership_date' => now()]
-            );
+            try {
 
-            // Add random titles
-            $dog->titles()->attach(
-                Title::inRandomOrder()->take(rand(1, 2))->pluck('id'),
-                ['date_achieved' => now()]
-            );
+                // Add random titles
+                // $dog->titles()->attach(
+                //     Title::inRandomOrder()->take(rand(1, 2))->pluck('id'),
+                //     ['date_achieved' => now()]
+                // );
 
-            // Add random medical examinations
-            MedicalExamination::factory(rand(1, 3))->create([
-                'dog_id' => $dog->id,
-                'examination_type_id' => ExaminationType::inRandomOrder()->first()->id,
-            ]);
+                // Add random medical examinations
+                // MedicalExamination::factory(rand(1, 3))->create([
+                //     'dog_id' => $dog->id,
+                //     'examination_type_id' => ExaminationType::inRandomOrder()->first()->id,
+                // ]);
+            } catch (\Exception $e) {
+                echo "Error processing dog {$dog->id}: " . $e->getMessage() . "\n";
+            }
         });
     }
 }

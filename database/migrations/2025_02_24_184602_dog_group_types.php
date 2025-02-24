@@ -9,13 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('dog_owners', function (Blueprint $table) {
+        Schema::create('dog_group_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('dog_id')->constrained()->onDelete('cascade');
-            $table->string('owner_name');
-            $table->timestamps();
+            $table->string('name');
         });
     }
 

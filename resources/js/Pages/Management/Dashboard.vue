@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout.vue";
-import { ref } from "vue";
+import SecondaryButton from "../../Components/SecondaryButton.vue";
+import { ref, defineProps, onMounted } from "vue";
+import axios from "axios";
 defineOptions({ layout: AuthenticatedLayout });
+
+const props = defineProps<{
+    dogs: Dog[];
+}>();
 
 // First, let's define interfaces for our dog type
 interface Owner {
@@ -31,6 +37,7 @@ const newDog = ref<Dog>({
     nickname: "",
     birthday: "",
     gender: "male",
+    dog_group: "not_own",
     pedigree_url: "",
     owners: [],
     medical_examinations: [],
@@ -88,8 +95,7 @@ const handleSubmit = async () => {
         // Validate form
         if (!validateForm()) return;
 
-        // Here you would typically make an API call to save the dog
-        // await axios.post('/api/dogs', newDog.value);
+        await axios.post("/api/dogs/store", newDog.value);
 
         // Reset form after successful submission
         resetForm();
@@ -131,15 +137,50 @@ const resetForm = () => {
         nickname: "",
         birthday: "",
         gender: "male",
+        dog_group: "not_own",
         pedigree_url: "",
         owners: [],
         medical_examinations: [],
     };
     errors.value = {};
 };
+
+onMounted(() => {
+    console.log(props.dogs);
+});
 </script>
 
 <template>
+    <div
+        class="max-w-5xl mx-auto w-full relative overflow-x-auto shadow-md sm:rounded-lg lg:my-8"
+    >
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <th scope="col" class="px-6 py-3">Kutsumanimi</th>
+                <th scope="col" class="px-6 py-3">Virallinen nimi</th>
+                <th scope="col" class="px-6 py-3">Syntymäpäivä</th>
+                <th scope="col" class="px-6 py-3">Sukupuoli</th>
+                <th scope="col" class="px-6 py-3">Ryhmä</th>
+                <th scope="col" class="px-6 py-3"></th>
+            </thead>
+            <tbody>
+                <tr
+                    v-for="dog in dogs"
+                    class="bg-white border-b border-gray-200 hover:bg-gray-50"
+                >
+                    <td class="px-6 py-4">{{ dog.nickname }}</td>
+                    <td class="px-6 py-4">{{ dog.name }}</td>
+                    <td class="px-6 py-4">{{ dog.birthday }}</td>
+                    <td class="px-6 py-4">{{ dog.gender }}</td>
+                    <td class="px-6 py-4">{{ dog.dog_group }}</td>
+                    <td class="px-6 py-4">
+                        <SecondaryButton class="">Näytä</SecondaryButton>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div class="max-w-2xl mx-auto p-4">
         <h1 class="text-2xl font-bold mb-4">Uuden koiran luonti</h1>
 
@@ -223,6 +264,53 @@ const resetForm = () => {
                             class="form-radio"
                         />
                         <span class="ml-2">Naaras</span>
+                    </label>
+                </div>
+                <span v-if="errors.gender" class="text-red-500 text-sm">{{
+                    errors.gender
+                }}</span>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700"
+                    >Koiran ryhmä</label
+                >
+                <div class="mt-1 space-x-4">
+                    <label class="inline-flex items-center">
+                        <input
+                            type="radio"
+                            v-model="newDog.dog_group"
+                            value="females"
+                            class="form-radio"
+                        />
+                        <span class="ml-2">Urokset</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input
+                            type="radio"
+                            v-model="newDog.dog_group"
+                            value="males"
+                            class="form-radio"
+                        />
+                        <span class="ml-2">Naaraat</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input
+                            type="radio"
+                            v-model="newDog.dog_group"
+                            value="memoriam"
+                            class="form-radio"
+                        />
+                        <span class="ml-2">Menehtyneet</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input
+                            type="radio"
+                            v-model="newDog.dog_group"
+                            value="not_own"
+                            class="form-radio"
+                        />
+                        <span class="ml-2">Ei oma</span>
                     </label>
                 </div>
                 <span v-if="errors.gender" class="text-red-500 text-sm">{{

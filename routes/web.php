@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DogController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/hallinta', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 });
 
+Route::prefix('/api')->middleware('auth')->group(function () {
+    Route::post('/dogs/store', [DogController::class, 'store'])->name('dog.store');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

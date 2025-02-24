@@ -15,9 +15,7 @@ class Dog extends Model
 
     public function owners()
     {
-        return $this->belongsToMany(User::class, 'dog_owner')
-            ->withPivot('ownership_date')
-            ->withTimestamps();
+        return $this->hasMany(DogOwner::class);
     }
 
     public function medicalExaminations()
