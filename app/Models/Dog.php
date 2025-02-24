@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Dog extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['name', 'nickname', 'birthday', 'gender', 'pedigree_url'];
+
+    protected $dates = ['birthday'];
+
+    public function owners()
+    {
+        return $this->belongsToMany(User::class, 'dog_owner')
+            ->withPivot('ownership_date')
+            ->withTimestamps();
+    }
+
+    public function medicalExaminations()
+    {
+        return $this->hasMany(MedicalExamination::class);
+    }
+
+    public function titles()
+    {
+        return $this->belongsToMany(Title::class, 'dog_titles')
+            ->withPivot('date_achieved')
+            ->withTimestamps();
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    public function fatheredLitters()
+    {
+        return $this->hasMany(Litter::class, 'father_id');
+    }
+
+    public function motheredLitters()
+    {
+        return $this->hasMany(Litter::class, 'mother_id');
+    }
+}
