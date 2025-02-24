@@ -6,6 +6,8 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
+
+const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
@@ -17,7 +19,7 @@ import { Link } from "@inertiajs/vue3";
                     <div class="flex">
                         <!-- Logo -->
                         <div class="flex shrink-0 items-center">
-                            <Link :href="route('dashboard')">
+                            <Link :href="route('Home')">
                                 <ApplicationLogo
                                     class="block h-9 w-auto fill-current text-gray-800"
                                 />
@@ -147,50 +149,50 @@ import { Link } from "@inertiajs/vue3";
                         Etusivu
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        :href="route('Home')"
+                        :active="route().current('Home')"
                     >
                         Blogi
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        :href="route('Home')"
+                        :active="route().current('Home')"
                     >
                         Kuvat
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        :href="route('Home')"
+                        :active="route().current('Home')"
                     >
                         Urokset
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        :href="route('Home')"
+                        :active="route().current('Home')"
                     >
                         Nartut
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        :href="route('Home')"
+                        :active="route().current('Home')"
                     >
                         Pentueet
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        :href="route('Home')"
+                        :active="route().current('Home')"
                     >
                         Pennun Hankinta
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        :href="route('Home')"
+                        :active="route().current('Home')"
                     >
                         Muistoissamme
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        :href="route('Home')"
+                        :active="route().current('Home')"
                     >
                         Tunnistusmerkintä
                     </ResponsiveNavLink>
