@@ -23,6 +23,8 @@ Route::get('/login', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/hallinta', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/hallinta/koirat', [AdminController::class, 'Dogs'])->name('admin.Dogs');
+    // Route::get('/hallinta/koira/uusi', [DogController::class,, 'create'])->name('dog.create');
 });
 
 Route::prefix('/api')->middleware('auth')->group(function () {

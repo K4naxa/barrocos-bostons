@@ -18,4 +18,16 @@ class AdminController extends Controller
             'dogs' => $dogs
         ]);
     }
+
+    public function Dogs(Request $request)
+    {
+
+
+        $dogs = Dog::all();
+        $dogs->load(['owners']);
+
+        return Inertia::render('Management/DogTable', [
+            'dogs' => $dogs
+        ]);
+    }
 }
