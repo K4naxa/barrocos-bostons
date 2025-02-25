@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('/api')->middleware('auth')->group(function () {
     // Tallenna luotu koira
-    Route::post('/dogs/store', [DogController::class, 'store'])->name('dog.store');
+    Route::post('/dog/store', [DogController::class, 'store'])->name('dog.store');
 });
 
 Route::middleware('auth')->group(function () {

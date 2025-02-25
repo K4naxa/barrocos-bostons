@@ -23,6 +23,7 @@ interface Dog {
     nickname: string;
     birthday: string;
     gender: "male" | "female";
+    dog_group: "males" | "females" | "memoriam" | "not_own";
     pedigree_url: string;
     owners: Owner[];
     medical_examinations: MedicalExamination[];
@@ -92,7 +93,7 @@ const handleSubmit = async () => {
         // Validate form
         if (!validateForm()) return;
 
-        await axios.post("/api/dogs/store", newDog.value);
+        await axios.post("/api/dog/store", newDog.value);
 
         // Reset form after successful submission
         resetForm();
@@ -243,7 +244,7 @@ const resetForm = () => {
                         <input
                             type="radio"
                             v-model="newDog.dog_group"
-                            value="females"
+                            value="males"
                             class="form-radio"
                         />
                         <span class="ml-2">Urokset</span>
@@ -252,7 +253,7 @@ const resetForm = () => {
                         <input
                             type="radio"
                             v-model="newDog.dog_group"
-                            value="males"
+                            value="females"
                             class="form-radio"
                         />
                         <span class="ml-2">Naaraat</span>

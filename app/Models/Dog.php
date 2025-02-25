@@ -11,8 +11,12 @@ class Dog extends Model
 
     protected $fillable = ['name', 'nickname', 'birthday', 'gender', 'pedigree_url'];
 
-    protected $dates = ['birthday'];
+    protected $dates = ['birthday', 'created_at', 'updated_at'];
 
+    public function groupType()
+    {
+        return $this->belongsTo(DogGroupType::class, 'dog_group');
+    }
     public function owners()
     {
         return $this->hasMany(DogOwner::class);

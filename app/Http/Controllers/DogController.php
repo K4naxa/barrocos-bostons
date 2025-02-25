@@ -21,10 +21,12 @@ class DogController extends Controller
                 'nickname' => 'nullable|string|max:255',
                 'birthday' => 'required|date',
                 'gender' => 'required|in:male,female',
-                'pedigree_url' => 'nullable|url'
+                'pedigree_url' => 'nullable|url',
+                'group' => 'exists:dog_group_types,id',
             ]);
 
-            $dog = Dog::create($validated);
+
+            $dog = Dog::create(array_merge($validated));
 
             return response()->json($dog, 201);
         } catch (\Throwable $th) {

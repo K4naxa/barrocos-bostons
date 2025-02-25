@@ -33,7 +33,9 @@ const props = defineProps<{
 }>();
 
 // dog table
-const filterGroup = ref("all");
+const filterGroup = ref<"all" | "male" | "female" | "memoriam" | "not_own">(
+    "all"
+);
 const tableSearchValue = ref("");
 
 const filteredDogs = computed(() => {
@@ -90,59 +92,58 @@ const filteredBySearch = computed(() => {
                     />
                 </div>
             </div>
-            <div class="">
-                <label
-                    class="block text-sm font-medium text-gray-700"
-                    for="dog_filtering"
-                    >Näytä seuravat</label
+            <div>
+                <select
+                    name="groupFilter"
+                    id="groupFilter"
+                    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    :class="{ 'text-gray-500': filterGroup === 'all' }"
+                    v-model="filterGroup"
                 >
-                <div class="mt-1 space-x-4">
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="filterGroup"
-                            value="all"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Kaikki</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="filterGroup"
-                            value="male"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Omat urokset</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="filterGroup"
-                            value="female"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Omat Naaraat</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="filterGroup"
-                            value="memoriam"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Menehtyneet</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="filterGroup"
-                            value="not_own"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Muut</span>
-                    </label>
-                </div>
+                    <option
+                        selected="Valitse ryhmä"
+                        value="all"
+                        class="text-gray-500"
+                    >
+                        Valitse Ryhmä
+                    </option>
+                    <option
+                        value="male"
+                        :class="{
+                            ' bg-gray-200': filterGroup === 'male',
+                            'text-gray-900': filterGroup !== 'male',
+                        }"
+                    >
+                        Omat urokset
+                    </option>
+                    <option
+                        value="female"
+                        :class="{
+                            ' bg-gray-200': filterGroup === 'female',
+                            'text-gray-900': filterGroup !== 'female',
+                        }"
+                    >
+                        Omat nartut
+                    </option>
+                    <option
+                        value="memoriam"
+                        :class="{
+                            ' bg-gray-200': filterGroup === 'memoriam',
+                            'text-gray-900': filterGroup !== 'memoriam',
+                        }"
+                    >
+                        Menehtyneet
+                    </option>
+                    <option
+                        value="not_own"
+                        :class="{
+                            ' bg-gray-200': filterGroup === 'not_own',
+                            'text-gray-900': filterGroup !== 'not_own',
+                        }"
+                    >
+                        Muut
+                    </option>
+                </select>
             </div>
         </div>
         <table class="w-full text-sm text-left rtl:text-right text-gray-500">
