@@ -22,12 +22,16 @@ Route::get('/login', function () {
 
 
 Route::middleware('auth')->group(function () {
+    // Hallintasivu
     Route::get('/hallinta', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    // Lista järjestelmän koirista
     Route::get('/hallinta/koirat', [AdminController::class, 'Dogs'])->name('admin.Dogs');
-    // Route::get('/hallinta/koira/uusi', [DogController::class,, 'create'])->name('dog.create');
+    // Uuden koiran luomis sivu
+    Route::get('/hallinta/koira/uusi', [DogController::class, 'create'])->name('dog.create');
 });
 
 Route::prefix('/api')->middleware('auth')->group(function () {
+    // Tallenna luotu koira
     Route::post('/dogs/store', [DogController::class, 'store'])->name('dog.store');
 });
 

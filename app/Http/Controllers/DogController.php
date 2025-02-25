@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Dog;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DogController extends Controller
 {
-    public function create(Request $request) {}
+    public function create()
+    {
+        error_log('trying to open create dog');
+        return Inertia::render('Management/DogCreate');
+    }
     public function store(Request $request)
     {
         try {
