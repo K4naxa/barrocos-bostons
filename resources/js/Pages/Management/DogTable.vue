@@ -33,14 +33,14 @@ const props = defineProps<{
 }>();
 
 // dog table
-const filterGroup = ref<"all" | "male" | "female" | "memoriam" | "not_own">(
+const filterGroup = ref<"all" | "males" | "females" | "memoriam" | "not_own">(
     "all"
 );
 const tableSearchValue = ref("");
 
 const filteredDogs = computed(() => {
     if (filterGroup.value === "all") return props.dogs;
-    return props.dogs.filter((dog) => dog.dog_group === filterGroup.value);
+    return props.dogs.filter((dog) => dog.group.name === filterGroup.value);
 });
 
 const filteredBySearch = computed(() => {
@@ -54,6 +54,10 @@ const filteredBySearch = computed(() => {
                 .toLowerCase()
                 .includes(tableSearchValue.value.toLowerCase())
     );
+});
+
+onMounted(() => {
+    console.log(props.dogs);
 });
 </script>
 <template>
@@ -108,19 +112,19 @@ const filteredBySearch = computed(() => {
                         Valitse Ryhmä
                     </option>
                     <option
-                        value="male"
+                        value="males"
                         :class="{
-                            ' bg-gray-200': filterGroup === 'male',
-                            'text-gray-900': filterGroup !== 'male',
+                            ' bg-gray-200': filterGroup === 'males',
+                            'text-gray-900': filterGroup !== 'males',
                         }"
                     >
                         Omat urokset
                     </option>
                     <option
-                        value="female"
+                        value="females"
                         :class="{
-                            ' bg-gray-200': filterGroup === 'female',
-                            'text-gray-900': filterGroup !== 'female',
+                            ' bg-gray-200': filterGroup === 'females',
+                            'text-gray-900': filterGroup !== 'females',
                         }"
                     >
                         Omat nartut
@@ -164,9 +168,16 @@ const filteredBySearch = computed(() => {
                     <td class="px-6 py-4">{{ dog.name }}</td>
                     <td class="px-6 py-4">{{ dog.birthday }}</td>
                     <td class="px-6 py-4">{{ dog.gender }}</td>
-                    <td class="px-6 py-4">{{ dog.dog_group }}</td>
+                    <td class="px-6 py-4">
+                        {{ dog.group.name }}
+                    </td>
                     <td class="px-6 py-4">
                         <SecondaryButton class="">Näytä</SecondaryButton>
+                    </td>
+                </tr>
+                <tr v-if="filteredBySearch.length === 0">
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                        Ei koiria löytynyt
                     </td>
                 </tr>
             </tbody>

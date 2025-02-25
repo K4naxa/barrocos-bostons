@@ -13,6 +13,6 @@ class DogGroupType extends Model
 
     public function dogs()
     {
-        return $this->hasMany(Dog::class, 'dog_group');
+        return $this->hasMany(Dog::class, 'group_id');
     }
 }

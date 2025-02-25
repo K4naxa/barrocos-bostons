@@ -19,7 +19,7 @@ const showingNavigationDropdown = ref(false);
                     <div class="flex">
                         <!-- Logo -->
                         <div class="flex shrink-0 items-center">
-                            <Link :href="route('Home')">
+                            <Link :href="route('home')">
                                 <ApplicationLogo
                                     class="block h-9 w-auto fill-current text-gray-800"
                                 />
@@ -31,62 +31,24 @@ const showingNavigationDropdown = ref(false);
                             class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                         >
                             <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
+                                :href="route('home')"
+                                :active="route().current('home')"
                             >
                                 Etusivu
                             </NavLink>
-                            <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
+                            <!-- <NavLink
+                                :href="route('')"
+                                :active="route().current('')"
                             >
                                 Blog
                             </NavLink>
 
                             <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
+                                :href="route('')"
+                                :active="route().current('')"
                             >
                                 Kuvat
-                            </NavLink>
-
-                            <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
-                            >
-                                Urokset
-                            </NavLink>
-
-                            <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
-                            >
-                                Nartut
-                            </NavLink>
-                            <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
-                            >
-                                Pentueet
-                            </NavLink>
-                            <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
-                            >
-                                Pennun hankinta
-                            </NavLink>
-                            <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
-                            >
-                                Muistoissamme
-                            </NavLink>
-                            <NavLink
-                                :href="route('Home')"
-                                :active="route().current('Home')"
-                            >
-                                Tunnistusmerkintä
-                            </NavLink>
+                            </NavLink> -->
                         </div>
                     </div>
 
@@ -143,58 +105,22 @@ const showingNavigationDropdown = ref(false);
             >
                 <div class="space-y-1 pb-3 pt-2">
                     <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
+                        :href="route('home')"
+                        :active="route().current('home')"
                     >
                         Etusivu
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
+                        :href="route('home')"
+                        :active="route().current('home')"
                     >
                         Blogi
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
+                        :href="route('home')"
+                        :active="route().current('home')"
                     >
                         Kuvat
-                    </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
-                    >
-                        Urokset
-                    </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
-                    >
-                        Nartut
-                    </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
-                    >
-                        Pentueet
-                    </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
-                    >
-                        Pennun Hankinta
-                    </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
-                    >
-                        Muistoissamme
-                    </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        :href="route('Home')"
-                        :active="route().current('Home')"
-                    >
-                        Tunnistusmerkintä
                     </ResponsiveNavLink>
                 </div>
             </div>

@@ -18,8 +18,8 @@ import { Link } from "@inertiajs/vue3";
                 </Link>
                 <Link
                     class="navlink"
-                    :class="{ active: route().current('admin.Dogs') }"
-                    :href="route('admin.Dogs')"
+                    :class="{ active: route().current('admin.dogs') }"
+                    :href="route('admin.dogs')"
                 >
                     Koirat
                 </Link>

@@ -9,13 +9,13 @@ class Dog extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'nickname', 'birthday', 'gender', 'pedigree_url'];
+    protected $fillable = ['name', 'nickname', 'birthday', 'gender', 'pedigree_url', 'group_id'];
 
     protected $dates = ['birthday', 'created_at', 'updated_at'];
 
-    public function groupType()
+    public function group()
     {
-        return $this->belongsTo(DogGroupType::class, 'dog_group');
+        return $this->belongsTo(DogGroupType::class, 'group_id');
     }
     public function owners()
     {

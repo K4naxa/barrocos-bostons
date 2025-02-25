@@ -14,7 +14,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-})->name('Home');
+})->name('home');
 
 Route::get('/login', function () {
     return Inertia::render('Auth.Login');
@@ -25,7 +25,7 @@ Route::middleware('auth')->group(function () {
     // Hallintasivu
     Route::get('/hallinta', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     // Lista järjestelmän koirista
-    Route::get('/hallinta/koirat', [AdminController::class, 'Dogs'])->name('admin.Dogs');
+    Route::get('/hallinta/koirat', [AdminController::class, 'dogs'])->name('admin.dogs');
     // Uuden koiran luomis sivu
     Route::get('/hallinta/koira/uusi', [DogController::class, 'create'])->name('dog.create');
 });

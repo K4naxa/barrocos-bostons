@@ -17,7 +17,7 @@ const userIsLoggedIn = computed(() => (page.props.auth.user ? true : false));
             class="flex justify-between fixed top-0 w-full bg-gray-900 z-50 px-4 h-8"
         >
             <nav class="flex gap-8 my-auto text-white">
-                <Link :href="route('Home')"> Kotisivu</Link>
+                <Link :href="route('home')"> Kotisivu</Link>
                 <Link :href="route('admin.dashboard')"> Hallinta</Link>
             </nav>
             <div class="hidden sm:ms-6 sm:flex sm:items-center">
@@ -30,7 +30,7 @@ const userIsLoggedIn = computed(() => (page.props.auth.user ? true : false));
                                     type="button"
                                     class="inline-flex items-center rounded-md border border-transparent bg-white px-2 py-1 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                 >
-                                    {{ $page.props.auth.user.name }}
+                                    {{ page.props.auth.user.name }}
 
                                     <svg
                                         class="-me-0.5 ms-2 h-4 w-4"

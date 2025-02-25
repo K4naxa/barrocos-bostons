@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Dog;
+use App\Models\DogGroupType;
 use Inertia\Inertia;
 
 class AdminController extends Controller
@@ -11,21 +12,20 @@ class AdminController extends Controller
 
     public function dashboard(Request $request)
     {
-        $dogs = Dog::all();
-        $dogs->load(['owners']);
-
-        return Inertia::render('Management/Dashboard', [
-            'dogs' => $dogs
-        ]);
+        return Inertia::render('Management/Dashboard', []);
     }
 
-    public function Dogs(Request $request)
+    public function dogs(Request $request)
     {
 
-
-        $dogs = Dog::all();
-        $dogs->load(['owners']);
-
+        $dogs = Dog::select(
+            'id',
+            'name',
+            'nickname',
+            'birthday',
+            'gender',
+            'group_id'
+        )->with(['owners', 'group:id,name'])->get();
         return Inertia::render('Management/DogTable', [
             'dogs' => $dogs
         ]);
