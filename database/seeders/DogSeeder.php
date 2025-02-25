@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Dog;
+use App\Models\DogGroupType;
 use App\Models\ExaminationType;
 use App\Models\MedicalExamination;
 use App\Models\Title;
@@ -15,6 +16,9 @@ class DogSeeder extends Seeder
     public function run()
     {
         // Check for required data
+        if (DogGroupType::count() === 0) {
+            throw new \Exception('No dog group types found. Please run DogGroupSeeder first.');
+        }
         // if (Title::count() === 0) {
         //     throw new \Exception('No titles found. Please run TitleSeeder first.');
         // }

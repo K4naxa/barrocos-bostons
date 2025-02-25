@@ -17,6 +17,7 @@ class DogFactory extends Factory
             'birthday' => $this->faker->date(),
             'gender' => $this->faker->randomElement(['male', 'female']),
             'pedigree_url' => $this->faker->url,
+            'group_id' => $this->faker->randomElement([1, 2, 3, 4]),
         ];
     }
 }

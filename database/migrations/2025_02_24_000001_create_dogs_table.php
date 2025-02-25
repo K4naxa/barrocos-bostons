@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('birthday');
             $table->enum('gender', ['male', 'female']);
             $table->string('pedigree_url')->nullable();
+            $table->foreignId('group_id')->constrained('dog_group_types');
             $table->timestamps();
         });
     }
@@ -27,6 +28,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('dogs', function (Blueprint $table) {
+            $table->dropForeign(['group_id']);
+        });
         Schema::dropIfExists('dogs');
     }
 };

@@ -19,8 +19,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ExaminationTypeSeeder::class,
-            DogSeeder::class,
             DogGroupSeeder::class,
+
+            DogSeeder::class,
         ]);
     }
 }
