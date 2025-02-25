@@ -33,7 +33,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // If the user was intending to visit a specific URL before being
+        // authenticated, they will be redirected to that URL after logging in.
+        if ($request->session()->has('url.intended')) {
+            return redirect()->intended();
+        }
+
+        // If the user is not redirected to a specific URL, they will be
+        // redirected to the default URL.
+        return redirect('/');
     }
 
     /**
