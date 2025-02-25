@@ -33,7 +33,7 @@ import { Link } from "@inertiajs/vue3";
             </div>
 
             <!-- Scrollable Main Content -->
-            <main class="ml-72">
+            <main class="ml-72 w-full">
                 <slot />
             </main>
         </div>

@@ -25,6 +25,7 @@ interface Dog {
     pedigree_url: string;
     owners: Owner[];
     medical_examinations: MedicalExamination[];
+    dog_group: string;
 }
 
 const props = defineProps<{
@@ -33,17 +34,31 @@ const props = defineProps<{
 
 // dog table
 const filterGroup = ref("all");
+const tableSearchValue = ref("");
 
 const filteredDogs = computed(() => {
     if (filterGroup.value === "all") return props.dogs;
     return props.dogs.filter((dog) => dog.dog_group === filterGroup.value);
 });
+
+const filteredBySearch = computed(() => {
+    if (!tableSearchValue.value) return filteredDogs.value;
+    return filteredDogs.value.filter(
+        (dog) =>
+            dog.name
+                .toLowerCase()
+                .includes(tableSearchValue.value.toLowerCase()) ||
+            dog.nickname
+                .toLowerCase()
+                .includes(tableSearchValue.value.toLowerCase())
+    );
+});
 </script>
 <template>
     <div
-        class="max-w-5xl mx-auto w-full relative overflow-x-auto shadow-md sm:rounded-lg lg:my-8"
+        class="max-w-5xl mx-auto w-full relative sm:rounded-lg lg:my-8 max-h-full overflow-auto"
     >
-        <div class="flex gap-8">
+        <div class="flex gap-8 px-4 py-2">
             <div class="">
                 <label for="table-search" class="sr-only">Hae</label>
                 <div class="relative m-1">
@@ -71,6 +86,7 @@ const filteredDogs = computed(() => {
                         id="table-search"
                         class="block pt-2 ps-10 text-sm"
                         placeholder="Etsi koiria"
+                        v-model="tableSearchValue"
                     />
                 </div>
             </div>
@@ -140,7 +156,7 @@ const filteredDogs = computed(() => {
             </thead>
             <tbody>
                 <tr
-                    v-for="dog in dogs"
+                    v-for="dog in filteredBySearch"
                     class="bg-white border-b border-gray-200 hover:bg-gray-50"
                 >
                     <td class="px-6 py-4">{{ dog.nickname }}</td>
