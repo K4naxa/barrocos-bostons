@@ -2,15 +2,18 @@
 import { ref, computed } from "vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
+
+const page = usePage();
 
 const showingNavigationDropdown = ref(false);
+const userIsLoggedIn = computed(() => (page.props.auth.user ? true : false));
 </script>
 
 <template>
     <div>
         <div
-            v-if="$page.props.auth.user"
+            v-if="userIsLoggedIn"
             class="flex justify-between fixed top-0 w-full bg-gray-900 z-50 px-4 h-8"
         >
             <nav class="flex gap-8 my-auto text-white">
@@ -64,7 +67,7 @@ const showingNavigationDropdown = ref(false);
 
         <!-- Page Content -->
         <main>
-            <div class="mt-8">
+            <div :class="{ 'mt-8': userIsLoggedIn }">
                 <slot />
             </div>
         </main>
