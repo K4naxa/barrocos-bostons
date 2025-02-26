@@ -19,6 +19,8 @@ const props = defineProps<{
 }>();
 interface DogRelationship {
     dog_id: number;
+    dog_name: string;
+    dog_nickname: string;
     is_primary: boolean;
     is_secondary: boolean;
 }
@@ -77,15 +79,26 @@ const validateForm = (): boolean => {
     return isValid;
 };
 // Add dog relationship to an image
-const addDogRelationship = (imageIndex: number, dogId: number) => {
+const addDogRelationship = (imageIndex: number, dog: Dog) => {
+    console.log("adding dog");
+
+    dogSearchInput.value = "";
     // Check if relationship already exists
-    const exists = newMedia.value[imageIndex].dog_relationships.some(
-        (rel) => rel.dog_id === dogId
-    );
+    const exists = newMedia.value[imageIndex].dog_relationships.some((rel) => {
+        rel.dog_id === dog.id;
+    });
 
     if (!exists) {
+        console.log("exists: ", exists);
+        console.log("Adding new dog: ", dog);
+        console.log(
+            "previous relationships: ",
+            newMedia.value[imageIndex].dog_relationships
+        );
         newMedia.value[imageIndex].dog_relationships.push({
-            dog_id: dogId,
+            dog_id: dog.id,
+            dog_name: dog.name,
+            dog_nickname: dog.nickname,
             is_primary: false,
             is_secondary: false,
         });
@@ -152,6 +165,7 @@ const onDragEnter = (event: DragEvent) => {
 };
 
 const dogSearchInput = ref<string>("");
+const isSearchFocused = ref(false);
 const dogSearchFilteredDogs = computed((): Dog[] => {
     let filteredDogs: Dog[] = props.dogs.filter(
         (d: Dog) =>
@@ -162,6 +176,11 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
     );
     return filteredDogs;
 });
+const handleSearchBlur = () => {
+    setTimeout(() => {
+        isSearchFocused.value = false;
+    }, 100);
+};
 </script>
 
 <template>
@@ -272,6 +291,7 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
 
                         <!-- Form Fields -->
                         <div class="w-full md:w-2/3 space-y-4">
+                            <!-- title and alt text -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label
@@ -300,6 +320,7 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                 </div>
                             </div>
 
+                            <!-- Check if user wants to place image to public gallery -->
                             <div>
                                 <label class="flex items-center">
                                     <input
@@ -321,33 +342,111 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                     Koirat
                                 </h3>
 
-                                <div class="border rounded-md p-3 relative">
-                                    <TextInput
-                                        v-model="dogSearchInput"
-                                        placeholder="Etsi koiria..."
-                                        class="w-full"
-                                    />
-                                    <div
-                                        v-if="dogSearchInput.length > 0"
-                                        class="mt-2 max-h-60 overflow-auto absolute bg-white border rounded-md w-full px-3"
-                                    >
+                                <div class="border rounded-md p-3">
+                                    <!-- List of dog relationships -->
+                                    <div class="mb-4">
                                         <div
-                                            v-for="dog in dogSearchFilteredDogs"
-                                            :key="dog.id"
-                                            class="flex items-center p-2 gap-2"
+                                            v-for="(
+                                                dog, dogIndex
+                                            ) in image.dog_relationships"
+                                            :key="dogIndex"
+                                            class="flex gap-4 py-2 flex-wrap w-full justify-between"
                                         >
-                                            {{ dog.nickname }}
-                                            <p class="text-gray-500">
-                                                {{ dog.name }}
-                                            </p>
+                                            {{ dog.dog_nickname }}
+
+                                            <!-- Div for buttons  -->
+                                            <div class="flex gap-8">
+                                                <label
+                                                    class="flex items-center"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        v-model="
+                                                            image
+                                                                .dog_relationships[
+                                                                dogIndex
+                                                            ].is_primary
+                                                        "
+                                                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                                    />
+                                                    <span
+                                                        class="ml-1 text-xs text-gray-700"
+                                                        >Uusi koiran
+                                                        profiilikuva</span
+                                                    >
+                                                </label>
+                                                <label
+                                                    class="flex items-center"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        v-model="
+                                                            image
+                                                                .dog_relationships[
+                                                                dogIndex
+                                                            ].is_secondary
+                                                        "
+                                                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                                    />
+                                                    <span
+                                                        class="ml-1 text-xs text-gray-700"
+                                                        >Näytä koiran
+                                                        kuvissa</span
+                                                    >
+                                                </label>
+
+                                                <button
+                                                    @click="
+                                                        removeDogRelationship(
+                                                            index,
+                                                            dog.dog_id
+                                                        )
+                                                    "
+                                                >
+                                                    X
+                                                </button>
+                                            </div>
                                         </div>
+                                    </div>
+
+                                    <!-- Dog search -->
+                                    <div class="relative">
+                                        <TextInput
+                                            v-model="dogSearchInput"
+                                            placeholder="Etsi koiria..."
+                                            class="w-full"
+                                            @focus="isSearchFocused = true"
+                                            @blur="handleSearchBlur()"
+                                        />
                                         <div
-                                            v-if="
-                                                dogSearchFilteredDogs.length < 1
-                                            "
-                                            class="py-2 text-gray-600"
+                                            v-show="isSearchFocused"
+                                            class="mt-2 max-h-60 overflow-auto absolute bg-white border rounded-md w-full z-10"
                                         >
-                                            Ei koiria haulle
+                                            <div
+                                                v-for="dog in dogSearchFilteredDogs"
+                                                :key="dog.id"
+                                                class="flex items-center p-2 gap-2 hover:bg-gray-200 hover:cursor-pointer"
+                                                @click.prevent="
+                                                    addDogRelationship(
+                                                        index,
+                                                        dog
+                                                    )
+                                                "
+                                            >
+                                                {{ dog.nickname }}
+                                                <p class="text-gray-500">
+                                                    {{ dog.name }}
+                                                </p>
+                                            </div>
+                                            <div
+                                                v-if="
+                                                    dogSearchFilteredDogs.length <
+                                                    1
+                                                "
+                                                class="py-2 text-gray-600"
+                                            >
+                                                Ei koiria haulle
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
