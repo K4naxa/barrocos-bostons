@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DogController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/hallinta/koirat', [AdminController::class, 'dogs'])->name('admin.dogs');
     // Uuden koiran luomis sivu
     Route::get('/hallinta/koira/uusi', [DogController::class, 'create'])->name('dog.create');
+
+    Route::get('/hallinta/media/uusi', [MediaController::class, 'create'])->name('media.create');
 });
 
 Route::prefix('/api')->middleware('auth')->group(function () {

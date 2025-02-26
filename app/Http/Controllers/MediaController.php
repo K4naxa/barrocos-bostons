@@ -5,11 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Dog;
 use App\Models\GalleryImage;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 use function PHPUnit\Framework\isArray;
 
 class MediaController extends Controller
 {
+
+    public function create(Request $request)
+    {
+        return Inertia::render('Management/MediaCreate');
+    }
     public function upload(Request $request)
     {
         try {

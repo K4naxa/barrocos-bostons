@@ -15,6 +15,8 @@ class AdminController extends Controller
         return Inertia::render('Management/Dashboard', []);
     }
 
+
+
     public function dogs(Request $request)
     {
 

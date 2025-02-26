@@ -30,6 +30,13 @@ import { Link } from "@inertiajs/vue3";
                 >
                     Luo Koira
                 </Link>
+                <Link
+                    class="navlink"
+                    :class="{ active: route().current('media.create') }"
+                    :href="route('media.create')"
+                >
+                    Tuo kuvia
+                </Link>
             </div>
 
             <!-- Scrollable Main Content -->
