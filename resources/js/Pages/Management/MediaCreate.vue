@@ -5,6 +5,7 @@ import TextInput from "../../Components/TextInput.vue";
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import UploadIcon from "@/Icons/UploadIcon.vue";
+import QuestionIcon from "@/Icons/QuestionIcon.vue";
 defineOptions({ layout: ManagementLayout });
 
 interface Dog {
@@ -154,8 +155,10 @@ const dogSearchInput = ref<string>("");
 const dogSearchFilteredDogs = computed((): Dog[] => {
     let filteredDogs: Dog[] = props.dogs.filter(
         (d: Dog) =>
-            d.name.includes(dogSearchInput.value) ||
-            d.nickname.includes(dogSearchInput.value)
+            d.name.toLowerCase().includes(dogSearchInput.value.toLowerCase()) ||
+            d.nickname
+                .toLowerCase()
+                .includes(dogSearchInput.value.toLowerCase())
     );
     return filteredDogs;
 });
@@ -256,7 +259,7 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-gray-700"
-                                        >Title</label
+                                        >Nimi</label
                                     >
                                     <TextInput
                                         v-model="image.title"
@@ -266,9 +269,9 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                 </div>
                                 <div>
                                     <label
-                                        class="block text-sm font-medium text-gray-700"
-                                        >Alt Text</label
-                                    >
+                                        class="text-sm font-medium text-gray-700 flex gap-1"
+                                        >Vaihtoehtoinen teksti <QuestionIcon />
+                                    </label>
 
                                     <TextInput
                                         v-model="image.alt_text"
@@ -308,7 +311,7 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                         class="w-full"
                                     />
                                     <div
-                                        v-if="dogSearchFilteredDogs.length > 0"
+                                        v-if="dogSearchInput.length > 0"
                                         class="mt-2 max-h-60 overflow-auto absolute bg-white border rounded-md w-full px-3"
                                     >
                                         <div
@@ -320,6 +323,14 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                             <p class="text-gray-500">
                                                 {{ dog.name }}
                                             </p>
+                                        </div>
+                                        <div
+                                            v-if="
+                                                dogSearchFilteredDogs.length < 1
+                                            "
+                                            class="py-2 text-gray-600"
+                                        >
+                                            Ei koiria haulle
                                         </div>
                                     </div>
                                 </div>
