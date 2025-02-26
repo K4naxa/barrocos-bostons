@@ -11,7 +11,7 @@ const userIsLoggedIn = computed(() => (page.props.auth.user ? true : false));
 </script>
 
 <template>
-    <div>
+    <div class="min-h-dvh flex flex-col">
         <div
             v-if="userIsLoggedIn"
             class="flex justify-between fixed top-0 w-full bg-gray-900 z-50 px-4 h-8"
@@ -66,8 +66,11 @@ const userIsLoggedIn = computed(() => (page.props.auth.user ? true : false));
         </div>
 
         <!-- Page Content -->
-        <main>
-            <div :class="{ 'mt-8': userIsLoggedIn }">
+        <main class="flex-1 flex flex-col">
+            <div
+                :class="{ 'mt-8': userIsLoggedIn }"
+                class="flex-1 flex flex-col"
+            >
                 <slot />
             </div>
         </main>

@@ -269,6 +269,7 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                         class="block text-sm font-medium text-gray-700"
                                         >Alt Text</label
                                     >
+
                                     <TextInput
                                         v-model="image.alt_text"
                                         class="w-full"

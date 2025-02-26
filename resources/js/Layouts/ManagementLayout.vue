@@ -35,7 +35,7 @@ import { Link } from "@inertiajs/vue3";
                     :class="{ active: route().current('media.create') }"
                     :href="route('media.create')"
                 >
-                    Tuo kuvia
+                    Tuo mediaa
                 </Link>
             </div>
 
