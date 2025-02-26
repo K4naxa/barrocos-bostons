@@ -2,106 +2,69 @@
 import ManagementLayout from "../../Layouts/ManagementLayout.vue";
 
 import TextInput from "../../Components/TextInput.vue";
-import { ref, defineProps, onMounted, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import UploadIcon from "@/Icons/UploadIcon.vue";
 defineOptions({ layout: ManagementLayout });
 
-// First, let's define interfaces for our dog type
-interface Owner {
-    id: number;
-    name: string;
-}
-
-interface MedicalExamination {
-    id: number;
-    date: string;
-    description: string;
-}
-
 interface Dog {
+    id: number;
     name: string;
     nickname: string;
-    birthday: string;
-    gender: "male" | "female";
-    dog_group: "males" | "females" | "memoriam" | "not_own";
-    pedigree_url: string;
-    owners: Owner[];
-    medical_examinations: MedicalExamination[];
 }
 
-// Initialize the form data
-const newDog = ref<Dog>({
-    name: "",
-    nickname: "",
-    birthday: "",
-    gender: "male",
-    dog_group: "not_own",
-    pedigree_url: "",
-    owners: [],
-    medical_examinations: [],
+const props = defineProps<{
+    dogs: Dog[];
+}>();
+interface DogRelationship {
+    dog_id: number;
+    is_primary: boolean;
+    is_secondary: boolean;
+}
+
+interface Image {
+    image: File;
+    title: string;
+    alt_text: string;
+    is_public: boolean;
+    dog_relationships: DogRelationship[];
+    preview: string;
+}
+
+// To create new Images to media
+const newImage = ref<Image>({
+    image: new File([], ""),
+    title: "",
+    alt_text: "",
+    is_public: false,
+    dog_relationships: [],
+    preview: "",
 });
 
-// Add owner
-const newOwner = ref<Partial<Owner>>({
-    name: "",
+// Add dog relationship to image
+const newDogRelationsip = ref<Partial<DogRelationship>>({
+    dog_id: 0,
+    is_primary: false,
+    is_secondary: false,
 });
 
-const addOwner = () => {
-    if (newOwner.value.name) {
-        newDog.value.owners.push({
-            id: Date.now(), // temporary ID
-            name: newOwner.value.name,
-        });
-        newOwner.value.name = "";
-    }
-};
-
-// Remove owner
-const removeOwner = (index: number) => {
-    newDog.value.owners.splice(index, 1);
-};
-
-// Add medical examination
-const newExamination = ref<Partial<MedicalExamination>>({
-    date: "",
-    description: "",
-});
-
-const addExamination = () => {
-    if (newExamination.value.date && newExamination.value.description) {
-        newDog.value.medical_examinations.push({
-            id: Date.now(), // temporary ID
-            date: newExamination.value.date,
-            description: newExamination.value.description,
-        });
-        newExamination.value.date = "";
-        newExamination.value.description = "";
-    }
-};
-
-// Remove medical examination
-const removeExamination = (index: number) => {
-    newDog.value.medical_examinations.splice(index, 1);
-};
-
-// Form validation state
-const errors = ref<Partial<Record<keyof Dog, string>>>({});
+// newMedia holds all the media for upload
+const newMedia = ref<Image[]>([]);
+// errors to be displayed
+const errors = ref<any>({});
 
 // Form submission handler
 const handleSubmit = async () => {
     try {
         // Validate form
-        if (!validateForm()) return;
+        // if (!validateForm()) return;
 
-        await axios.post("/api/dog/store", newDog.value);
-
-        // Reset form after successful submission
-        resetForm();
+        await axios.post("/api/media/store", newMedia.value);
 
         // Show success message
-        alert("Dog created successfully!");
+        alert("media uploaded successfully!");
     } catch (error) {
-        console.error("Error creating dog:", error);
+        console.error("Error uploading media:", error);
     }
 };
 
@@ -110,264 +73,257 @@ const validateForm = (): boolean => {
     errors.value = {};
     let isValid = true;
 
-    if (!newDog.value.name.trim()) {
-        errors.value.name = "Name is required";
-        isValid = false;
-    }
-
-    if (!newDog.value.birthday) {
-        errors.value.birthday = "Birthday is required";
-        isValid = false;
-    }
-
-    if (!newDog.value.gender) {
-        errors.value.gender = "Gender is required";
-        isValid = false;
-    }
-
     return isValid;
 };
+// Add dog relationship to an image
+const addDogRelationship = (imageIndex: number, dogId: number) => {
+    // Check if relationship already exists
+    const exists = newMedia.value[imageIndex].dog_relationships.some(
+        (rel) => rel.dog_id === dogId
+    );
 
-// Reset form
-const resetForm = () => {
-    newDog.value = {
-        name: "",
-        nickname: "",
-        birthday: "",
-        gender: "male",
-        dog_group: "not_own",
-        pedigree_url: "",
-        owners: [],
-        medical_examinations: [],
-    };
-    errors.value = {};
+    if (!exists) {
+        newMedia.value[imageIndex].dog_relationships.push({
+            dog_id: dogId,
+            is_primary: false,
+            is_secondary: false,
+        });
+    }
 };
+
+// Remove dog relationship from an image
+const removeDogRelationship = (imageIndex: number, dogId: number) => {
+    newMedia.value[imageIndex].dog_relationships = newMedia.value[
+        imageIndex
+    ].dog_relationships.filter((rel) => rel.dog_id !== dogId);
+};
+
+// Remove an image from the list
+const removeImage = (index: number) => {
+    newMedia.value.splice(index, 1);
+};
+const handleFiles = (event: Event | DragEvent) => {
+    console.log("hanling file drop");
+    let files: FileList | null = null;
+
+    if (event.type === "drop") {
+        event.preventDefault();
+        files = (event as DragEvent).dataTransfer?.files || null;
+    } else {
+        files = (event.target as HTMLInputElement).files;
+    }
+
+    if (!files) {
+        console.log("no files seen");
+        return;
+    }
+
+    console.log(files);
+
+    // process files
+    Array.from(files).forEach((file) => {
+        if (!file.type.startsWith("image/")) return;
+
+        // create preview link
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            newMedia.value.push({
+                image: file,
+                title: file.name.split(".")[0],
+                alt_text: file.name.split(".")[0],
+                is_public: false,
+                dog_relationships: [],
+                preview: e.target?.result as string,
+            });
+        };
+
+        reader.readAsDataURL(file);
+    });
+};
+
+// Handle drag events
+const onDragOver = (event: DragEvent) => {
+    event.preventDefault();
+};
+
+const onDragEnter = (event: DragEvent) => {
+    event.preventDefault();
+};
+
+const dogSearchInput = ref<string>("");
+const dogSearchFilteredDogs = computed((): Dog[] => {
+    let filteredDogs: Dog[] = props.dogs.filter(
+        (d: Dog) =>
+            d.name.includes(dogSearchInput.value) ||
+            d.nickname.includes(dogSearchInput.value)
+    );
+    return filteredDogs;
+});
 </script>
 
 <template>
-    <div class="max-w-2xl mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Uuden Median luonti</h1>
+    <div class="max-w-4xl mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">Tuo uusia kuvia</h1>
 
-        <form
-            @submit.prevent="handleSubmit"
-            @keydown.enter.prevent
-            class="space-y-4"
-        >
-            <!-- Nickname -->
-            <div>
+        <form @submit.prevent="handleSubmit" class="space-y-6">
+            <!-- Dropzone -->
+            <div
+                class="flex items-center justify-center w-full"
+                @dragover="onDragOver"
+                @dragenter="onDragEnter"
+                @drop="handleFiles"
+            >
                 <label
-                    for="nickname"
-                    class="block text-sm font-medium text-gray-700"
-                    >Kutsumani nimi</label
+                    for="dropzone-file"
+                    class="flex flex-col select-none items-center justify-center w-full h-64 border shadow-md border-gray-400 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
                 >
-                <input
-                    id="nickname"
-                    v-model="newDog.nickname"
-                    type="text"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                />
-            </div>
-            <!-- Name -->
-            <div>
-                <label
-                    for="name"
-                    class="block text-sm font-medium text-gray-700"
-                    >Virallinen nimi</label
-                >
-                <input
-                    id="name"
-                    v-model="newDog.name"
-                    type="text"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    :class="{ 'border-red-500': errors.name }"
-                />
-                <span v-if="errors.name" class="text-red-500 text-sm">{{
-                    errors.name
-                }}</span>
-            </div>
-
-            <!-- Birthday -->
-            <div>
-                <label
-                    for="birthday"
-                    class="block text-sm font-medium text-gray-700"
-                    >Syntymäpäivä</label
-                >
-                <input
-                    id="birthday"
-                    v-model="newDog.birthday"
-                    type="date"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                    :class="{ 'border-red-500': errors.birthday }"
-                />
-                <span v-if="errors.birthday" class="text-red-500 text-sm">{{
-                    errors.birthday
-                }}</span>
-            </div>
-
-            <!-- Gender -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700"
-                    >Sukupuoli</label
-                >
-                <div class="mt-1 space-x-4">
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="newDog.gender"
-                            value="male"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Uros</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="newDog.gender"
-                            value="female"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Naaras</span>
-                    </label>
-                </div>
-                <span v-if="errors.gender" class="text-red-500 text-sm">{{
-                    errors.gender
-                }}</span>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700"
-                    >Koiran ryhmä</label
-                >
-                <div class="mt-1 space-x-4">
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="newDog.dog_group"
-                            value="males"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Urokset</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="newDog.dog_group"
-                            value="females"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Naaraat</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="newDog.dog_group"
-                            value="memoriam"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Menehtyneet</span>
-                    </label>
-                    <label class="inline-flex items-center">
-                        <input
-                            type="radio"
-                            v-model="newDog.dog_group"
-                            value="not_own"
-                            class="form-radio"
-                        />
-                        <span class="ml-2">Ei oma</span>
-                    </label>
-                </div>
-                <span v-if="errors.gender" class="text-red-500 text-sm">{{
-                    errors.gender
-                }}</span>
-            </div>
-
-            <!-- Pedigree URL -->
-            <div>
-                <label
-                    for="pedigree_url"
-                    class="block text-sm font-medium text-gray-700"
-                    >Sukutaulu linkki</label
-                >
-                <input
-                    placeholder="jalostus.kennelliito.fi/#######"
-                    id="pedigree_url"
-                    v-model="newDog.pedigree_url"
-                    type="url"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                />
-            </div>
-            <!-- Owners -->
-            <div>
-                <h3 class="text-lg font-medium text-gray-700">Omistajat</h3>
-                <div class="mt-2 space-y-2">
                     <div
-                        v-for="(owner, index) in newDog.owners"
-                        :key="owner.id"
-                        class="flex items-center space-x-2"
+                        class="flex flex-col items-center justify-center pt-5 pb-6"
                     >
-                        <span>{{ owner.name }}</span>
-                        <button
-                            @click="removeOwner(index)"
-                            class="text-red-500"
-                        >
-                            Poista
-                        </button>
+                        <UploadIcon />
+                        <p class="mb-2 text-sm text-gray-500">
+                            <span class="font-semibold"
+                                >Klikkaa tuodaksesi kuvia</span
+                            >
+                            tai raahaa kuvat laatikkoon
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            SVG, PNG, JPG (max. 10Mb)
+                        </p>
                     </div>
-                    <div class="flex space-x-2">
-                        <input
-                            @keydown.enter="addOwner"
-                            v-model="newOwner.name"
-                            type="text"
-                            class="form-input"
-                        />
-                        <button
-                            @click="addOwner"
-                            class="px-3 py-1 bg-green-500 text-white rounded"
-                        >
-                            Lisää
-                        </button>
-                    </div>
-                </div>
+                    <input
+                        id="dropzone-file"
+                        type="file"
+                        class="hidden"
+                        multiple
+                        accept="image/png, image/jpeg, image/jpg, image/svg+xml"
+                        @change="handleFiles"
+                    />
+                </label>
             </div>
 
-            <!-- Medical Examinations -->
-            <div>
-                <h3 class="text-lg font-medium text-gray-700">
-                    Terveystulokset
-                </h3>
-                <div class="mt-2 space-y-2">
-                    <div
-                        v-for="(exam, index) in newDog.medical_examinations"
-                        :key="exam.id"
-                        class="flex items-center space-x-2"
-                    >
-                        <span>{{ exam.date }} - {{ exam.description }}</span>
-                        <button
-                            @click="removeExamination(index)"
-                            class="text-red-500"
-                        >
-                            Poista
-                        </button>
-                    </div>
-                    <div class="flex space-x-2">
-                        <input
-                            v-model="newExamination.date"
-                            type="date"
-                            class="form-input"
-                        />
-                        <input
-                            v-model="newExamination.description"
-                            type="text"
-                            placeholder="Tulos"
-                            class="form-input"
-                        />
-                        <button
-                            @click="addExamination"
-                            class="px-3 py-1 bg-green-500 text-white rounded"
-                        >
-                            Lisää
-                        </button>
+            <!-- Image Preview and Form Fields -->
+            <div v-if="newMedia.length > 0" class="space-y-4">
+                <h2 class="text-xl font-semibold">
+                    Tuodut kuvat ({{ newMedia.length }})
+                </h2>
+
+                <div
+                    v-for="(image, index) in newMedia"
+                    :key="index"
+                    class="border rounded-lg p-4 shadow-sm"
+                >
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <!-- Image Preview -->
+                        <div class="w-full md:w-1/3">
+                            <div class="relative">
+                                <img
+                                    :src="image.preview"
+                                    alt="Preview"
+                                    class="w-full h-48 object-cover rounded-lg"
+                                />
+                                <button
+                                    type="button"
+                                    @click="removeImage(index)"
+                                    class="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                                    title="Remove image"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="h-5 w-5"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="mt-2 text-sm text-gray-500">
+                                {{ image.image.name }} ({{
+                                    (image.image.size / 1024).toFixed(0)
+                                }}
+                                KB)
+                            </div>
+                        </div>
+
+                        <!-- Form Fields -->
+                        <div class="w-full md:w-2/3 space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-gray-700"
+                                        >Title</label
+                                    >
+                                    <TextInput
+                                        v-model="image.title"
+                                        class="w-full"
+                                        :error="errors[`media.${index}.title`]"
+                                    />
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-gray-700"
+                                        >Alt Text</label
+                                    >
+                                    <TextInput
+                                        v-model="image.alt_text"
+                                        class="w-full"
+                                        :error="
+                                            errors[`media.${index}.alt_text`]
+                                        "
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        v-model="image.is_public"
+                                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    />
+                                    <span class="ml-2 text-sm text-gray-700"
+                                        >Julkinen kuva</span
+                                    >
+                                </label>
+                            </div>
+
+                            <!-- Dog Relationships -->
+                            <div v-if="props.dogs && props.dogs.length > 0">
+                                <h3
+                                    class="text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Koirat
+                                </h3>
+
+                                <div class="border rounded-md p-3 relative">
+                                    <TextInput
+                                        v-model="dogSearchInput"
+                                        placeholder="Etsi koiria..."
+                                        class="w-full"
+                                    />
+                                    <div
+                                        v-if="dogSearchFilteredDogs.length > 0"
+                                        class="mt-2 max-h-60 overflow-auto absolute bg-white border rounded-md w-full px-3"
+                                    >
+                                        <div
+                                            v-for="dog in dogSearchFilteredDogs"
+                                            :key="dog.id"
+                                            class="flex items-center p-2 gap-2"
+                                        >
+                                            {{ dog.nickname }}
+                                            <p class="text-gray-500">
+                                                {{ dog.name }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -375,17 +331,11 @@ const resetForm = () => {
             <!-- Submit Button -->
             <div class="flex justify-end space-x-3">
                 <button
-                    type="button"
-                    @click="resetForm"
-                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                    Nollaa
-                </button>
-                <button
+                    v-if="newMedia.length > 0"
                     type="submit"
                     class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700"
                 >
-                    Luo koira
+                    Tallenna kuvat
                 </button>
             </div>
         </form>

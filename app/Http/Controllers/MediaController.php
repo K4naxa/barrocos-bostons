@@ -14,7 +14,10 @@ class MediaController extends Controller
 
     public function create(Request $request)
     {
-        return Inertia::render('Management/MediaCreate');
+        $dogs = Dog::select('id', 'name', 'nickname')->get();
+        return Inertia::render('Management/MediaCreate', [
+            'dogs' => $dogs
+        ]);
     }
     public function upload(Request $request)
     {

@@ -31,12 +31,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/hallinta/koira/uusi', [DogController::class, 'create'])->name('dog.create');
 
     Route::get('/hallinta/kuvat/uusi', [MediaController::class, 'create'])->name('media.create');
-    Route::get('hallinta/kuvat', [MediaController::class, 'upload'])->name('media.upload');
 });
 
 Route::prefix('/api')->middleware('auth')->group(function () {
     // Tallenna luotu koira
     Route::post('/dog/store', [DogController::class, 'store'])->name('dog.store');
+    Route::get('/media/store', [MediaController::class, 'upload'])->name('media.upload');
 });
 
 Route::middleware('auth')->group(function () {
