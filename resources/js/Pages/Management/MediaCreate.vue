@@ -223,7 +223,7 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                 <img
                                     :src="image.preview"
                                     alt="Preview"
-                                    class="w-full h-48 object-cover rounded-lg"
+                                    class="w-full h-40 object-cover rounded-lg"
                                 />
                                 <button
                                     type="button"
@@ -245,11 +245,28 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
                                     </svg>
                                 </button>
                             </div>
-                            <div class="mt-2 text-sm text-gray-500">
+                            <div class="mt-2 text-sm text-gray-500 flex gap-4">
                                 {{ image.image.name }} ({{
                                     (image.image.size / 1024).toFixed(0)
                                 }}
                                 KB)
+                                <p
+                                    :class="
+                                        image.image.size / 1024 < 700
+                                            ? 'text-red-500'
+                                            : image.image.size / 1024 < 3000
+                                            ? 'text-green-400'
+                                            : 'text-purple-500'
+                                    "
+                                >
+                                    {{
+                                        image.image.size / 1024 < 700
+                                            ? "poor quality"
+                                            : image.image.size / 1024 < 3000
+                                            ? "decent quality"
+                                            : "great quality"
+                                    }}
+                                </p>
                             </div>
                         </div>
 
