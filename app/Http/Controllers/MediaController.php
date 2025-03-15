@@ -36,22 +36,35 @@ class MediaController extends Controller
                 'images.*.dog_relationships.*.is_public' => 'boolean',
             ]);
 
+            $uploadedImages = [];
 
             foreach ($validated['images'] as $item) {
 
                 // create application model
                 $image = Image::create([
                     'title' => $item['title'],
-                    'alt_text' => $item['alt_text'] ?? null,
-                    'is_public' =>  $item['is_public'],
+                    'alt_text' => $item['alt_text'],
+                    'is_public' => $item['is_public'] ?? false,
                 ]);
 
-                $image->addMedia($item['image'])
-                    ->withCustomProperties([
-                        'original_name' => $item['image']['name'],
-                        'size' => $item['image']['size'],
-                    ])
-                    ->toMediaCollection('images');
+                if (isset($item['image']) && $item['image']) {
+                    $image->addMedia($item['image'])
+                        ->toMediaCollection('gallery');
+                }
+
+                $uploadedImages[] = [
+                    'id' => $image->id,
+                    'title' => $image->title,
+                    'alt_text' => $image->alt_text,
+                    'is_public' => $image->is_public,
+                    'urls' => [
+                        'original' => $image->getFirstMediaUrl('gallery'),
+                        'thumb' => $image->getFirstMediaUrl('gallery', 'thumb'),
+                        'medium' => $image->getFirstMediaUrl('gallery', 'medium'),
+                    ]
+                ];
+
+
 
 
                 // Check dog assosiations
@@ -75,7 +88,10 @@ class MediaController extends Controller
                 // }
             };
 
-            return response()->json(["Suceess"], 200);
+            return response()->json([
+                'success' => true,
+                'images' => $uploadedImages
+            ]);
         } catch (\Throwable $th) {
             error_log($th);
             return response()->json([
