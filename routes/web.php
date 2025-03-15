@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('/api')->middleware('auth')->group(function () {
     // Tallenna luotu koira
     Route::post('/dog/store', [DogController::class, 'store'])->name('dog.store');
-    Route::get('/media/store', [MediaController::class, 'upload'])->name('media.upload');
+    Route::get('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
 });
 
 Route::middleware('auth')->group(function () {

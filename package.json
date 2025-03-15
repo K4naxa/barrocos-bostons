@@ -22,6 +22,7 @@
         "vue-tsc": "^2.0.24"
     },
     "dependencies": {
+        "@rollup/rollup-darwin-arm64": "^4.34.8",
         "@vue/runtime-core": "^3.5.13"
     }
 }

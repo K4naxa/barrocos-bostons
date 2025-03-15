@@ -50,9 +50,9 @@ class MediaController extends Controller
                 ])->toMediaGallery('gallery');
 
                 // Check dog assosiations
-                if (isset($items['dog_relationships']) && isArray($items['dog_relationships'])) {
+                if (isset($item['dog_relationships']) && isArray($item['dog_relationships'])) {
 
-                    foreach ($items['dog_relationships'] as $relationship) {
+                    foreach ($item['dog_relationships'] as $relationship) {
 
                         $dogId = $relationship['dog_id'];
                         $dog = Dog::find($dogId);
@@ -69,6 +69,8 @@ class MediaController extends Controller
                     }
                 }
             };
+
+            return response()->json(["Suceess"], 200);
         } catch (\Throwable $th) {
             error_log($th);
             return response()->json([
