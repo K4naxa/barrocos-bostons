@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Head, Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "./AuthenticatedLayout.vue";
-import NavLink from "@/Components/NavLink.vue";
-import { Link } from "@inertiajs/vue3";
 </script>
 
 <template>
+    <Head title="Hallinta" />
     <AuthenticatedLayout>
         <div class="flex flex-1 overflow-hidden">
             <!-- Fixed Menu -->
