@@ -19,8 +19,6 @@ const props = defineProps<{
 }>();
 interface DogRelationship {
     dog_id: number;
-    dog_name: string;
-    dog_nickname: string;
     is_primary: boolean;
     is_secondary: boolean;
 }
@@ -60,12 +58,53 @@ const errors = ref<any>({});
 const handleSubmit = async () => {
     try {
         // Validate form
-        // if (!validateForm()) return;
+        if (!validateForm()) return;
 
-        await axios.post("/api/media/store", newMedia.value);
+        // Create FormData object for proper file upload
+        const formData = new FormData();
+
+        // Add each image file and its metadata
+        newMedia.value.forEach((media, index) => {
+            // Add the actual file
+            formData.append(`images[${index}][image]`, media.image);
+
+            // Add other properties
+            formData.append(`images[${index}][title]`, media.title);
+            formData.append(`images[${index}][alt_text]`, media.alt_text);
+            formData.append(
+                `images[${index}][is_public]`,
+                media.is_public ? "1" : "0"
+            );
+
+            // Add dog relationships
+            media.dog_relationships.forEach((rel, relIndex) => {
+                formData.append(
+                    `images[${index}][dog_relationships][${relIndex}][dog_id]`,
+                    rel.dog_id
+                );
+                formData.append(
+                    `images[${index}][dog_relationships][${relIndex}][is_primary]`,
+                    rel.is_primary ? "1" : "0"
+                );
+                formData.append(
+                    `images[${index}][dog_relationships][${relIndex}][is_secondary]`,
+                    rel.is_secondary ? "1" : "0"
+                );
+            });
+        });
+
+        // Send FormData to server
+        await axios.post("/api/media/store", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
 
         // Show success message
-        alert("media uploaded successfully!");
+        alert("Media uploaded successfully!");
+
+        // Optionally reset form
+        newMedia.value = [];
     } catch (error) {
         console.error("Error uploading media:", error);
     }
@@ -84,9 +123,9 @@ const addDogRelationship = (imageIndex: number, dog: Dog) => {
 
     dogSearchInput.value = "";
     // Check if relationship already exists
-    const exists = newMedia.value[imageIndex].dog_relationships.some((rel) => {
-        rel.dog_id === dog.id;
-    });
+    const exists = newMedia.value[imageIndex].dog_relationships.some(
+        (rel) => rel.dog_id === dog.id
+    );
 
     if (!exists) {
         console.log("exists: ", exists);
@@ -153,6 +192,8 @@ const handleFiles = (event: Event | DragEvent) => {
 
         reader.readAsDataURL(file);
     });
+
+    console.log("new media: ", newMedia);
 };
 
 // Handle drag events

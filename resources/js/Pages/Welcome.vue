@@ -8,7 +8,7 @@ defineOptions({ layout: CombinedLayout });
 </script>
 
 <template>
-    <Head title="Welcome" />
+    <Head title="Etusivu" />
 
     this is our home PAGE
 </template>
