@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/hallinta/koira/uusi', [DogController::class, 'create'])->name('dog.create');
 
     Route::get('/hallinta/kuvat/uusi', [MediaController::class, 'create'])->name('media.create');
+
+    Route::get('/hallinta/kuvat', [MediaController::class, 'managementGallery'])->name('admin.managementGallery');
 });
 
 Route::prefix('/api')->middleware('auth')->group(function () {

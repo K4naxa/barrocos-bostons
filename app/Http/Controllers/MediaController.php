@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Dog;
 use App\Models\Image;
-use App\Models\GalleryImage;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -12,6 +11,28 @@ use function PHPUnit\Framework\isArray;
 
 class MediaController extends Controller
 {
+
+    public function index(Request $request) {}
+
+    public function managementGallery()
+    {
+        $images = Image::get()
+            ->map(function ($image) {
+                return [
+                    'id' => $image->id,
+                    'title' => $image->title,
+                    'alt_text' => $image->alt_text,
+                    'is_public' => $image->is_public,
+                    'url' => $image->getFirstMediaUrl('gallery'),
+                    'thumbnail' => $image->getFirstMediaUrl('gallery', 'thumb'),
+                    'medium' => $image->getFirstMediaUrl('gallery', 'medium'),
+                ];
+            });
+
+        return Inertia::render('Management/ManagementGallery', [
+            'images' => $images,
+        ]);
+    }
 
     public function create(Request $request)
     {
@@ -26,7 +47,7 @@ class MediaController extends Controller
             $validated = $request->validate([
 
                 'images' => 'required|array',
-                'images.*.image' => 'required|image|max:10240',
+                'images.*.image' => 'required|image|max:20240',
                 'images.*.title' => 'required|string|max:255',
                 'images.*.alt_text' => 'required|string|max:255',
                 'images.*.dog_relationships' => 'array',

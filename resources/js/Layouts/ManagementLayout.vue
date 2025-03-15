@@ -37,6 +37,15 @@ import AuthenticatedLayout from "./AuthenticatedLayout.vue";
                 >
                     Tuo mediaa
                 </Link>
+                <Link
+                    class="navlink"
+                    :class="{
+                        active: route().current('admin.managementGallery'),
+                    }"
+                    :href="route('admin.managementGallery')"
+                >
+                    Kuvat
+                </Link>
             </div>
 
             <!-- Scrollable Main Content -->

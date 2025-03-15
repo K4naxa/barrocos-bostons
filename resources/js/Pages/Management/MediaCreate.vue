@@ -53,10 +53,12 @@ const newDogRelationsip = ref<Partial<DogRelationship>>({
 const newMedia = ref<Image[]>([]);
 // errors to be displayed
 const errors = ref<any>({});
+const is_loading = ref<boolean>(false);
 
 // Form submission handler
 const handleSubmit = async () => {
     try {
+        is_loading.value = true;
         // Validate form
         if (!validateForm()) return;
 
@@ -107,6 +109,8 @@ const handleSubmit = async () => {
         newMedia.value = [];
     } catch (error) {
         console.error("Error uploading media:", error);
+    } finally {
+        is_loading.value = false;
     }
 };
 
@@ -502,7 +506,8 @@ const handleSearchBlur = () => {
                 <button
                     v-if="newMedia.length > 0"
                     type="submit"
-                    class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700"
+                    :disabled="is_loading"
+                    class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-35"
                 >
                     Tallenna kuvat
                 </button>
