@@ -18,7 +18,6 @@ return new class extends Migration
             $table->date('birthday');
             $table->enum('gender', ['male', 'female']);
             $table->string('pedigree_url')->nullable();
-            $table->foreignId('primary_image_id')->nullable()->constrained('gallery_images');
             $table->foreignId('group_id')->constrained('dog_group_types');
             $table->timestamps();
         });
