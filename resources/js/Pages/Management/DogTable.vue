@@ -171,8 +171,11 @@ onMounted(() => {
                     <td class="px-6 py-4">
                         {{ dog.group.name }}
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 flex gap-2">
                         <SecondaryButton class="">Näytä</SecondaryButton>
+                        <SecondaryButton class="bg-gray-300"
+                            >Muokkaa</SecondaryButton
+                        >
                     </td>
                 </tr>
                 <tr v-if="filteredBySearch.length === 0">

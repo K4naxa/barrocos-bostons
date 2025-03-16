@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout.vue";
 import ManagementLayout from "../../Layouts/ManagementLayout.vue";
 import { ref, defineProps, onMounted, computed } from "vue";
+import axios from "axios";
 import TextInput from "../../Components/TextInput.vue";
 import SecondaryButton from "../../Components/SecondaryButton.vue";
 defineOptions({ layout: ManagementLayout });
@@ -22,11 +22,15 @@ const props = defineProps<{
     images: Image[];
 }>();
 
-// dog table
-const filterGroup = ref<"all" | "males" | "females" | "memoriam" | "not_own">(
-    "all"
-);
-const tableSearchValue = ref("");
+const deleteImage = async (id: number) => {
+    try {
+        await axios.delete(`/api/images/${id}`);
+        // Refresh the page
+        window.location.reload();
+    } catch (error) {
+        console.error("Failed to delete image", error);
+    }
+};
 
 onMounted(() => {
     console.log(props.images);
@@ -49,7 +53,7 @@ onMounted(() => {
                     v-for="image in props.images"
                     :key="image.id"
                     @click="selectedImage = image"
-                    class="mb-4"
+                    class=""
                 >
                     <img
                         :src="image.thumbnail"
@@ -108,6 +112,14 @@ onMounted(() => {
                             id="isPublicSelect"
                             :checked="selectedImage.is_public"
                         />
+                    </div>
+
+                    <div>
+                        <span
+                            class="mt-4 text-red-500 cursor-pointer"
+                            @click="deleteImage(selectedImage.id)"
+                            >Poista kuva</span
+                        >
                     </div>
                 </div>
 

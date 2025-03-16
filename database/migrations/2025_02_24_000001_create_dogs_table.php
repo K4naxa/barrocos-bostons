@@ -31,6 +31,28 @@ return new class extends Migration
         Schema::table('dogs', function (Blueprint $table) {
             $table->dropForeign(['group_id']);
         });
+
+        Schema::table('dog_owners', function (Blueprint $table) {
+            $table->dropForeign(['dog_id']);
+        });
+        Schema::table('medical_examinations', function (Blueprint $table) {
+            $table->dropForeign(['dog_id']);
+        });
+        Schema::table('dog_titles', function (Blueprint $table) {
+            $table->dropForeign(['dog_id']);
+        });
+
+        Schema::table('litters', function (Blueprint $table) {
+            $table->dropForeign(['mother_id']);
+        });
+        Schema::table('litters', function (Blueprint $table) {
+            $table->dropForeign(['father_id']);
+        });
+
+        Schema::table('litter_puppies', function (Blueprint $table) {
+            $table->dropForeign(['dog_id']);
+        });
+
         Schema::dropIfExists('dogs');
     }
 };

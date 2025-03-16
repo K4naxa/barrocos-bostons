@@ -461,7 +461,18 @@ const handleSearchBlur = () => {
                                             placeholder="Etsi koiria..."
                                             class="w-full"
                                             @focus="isSearchFocused = true"
-                                            @blur="handleSearchBlur()"
+                                            @blur="isSearchFocused = false"
+                                            @keydown.enter.prevent="
+                                                if (
+                                                    dogSearchFilteredDogs.length >
+                                                    0
+                                                ) {
+                                                    addDogRelationship(
+                                                        index,
+                                                        dogSearchFilteredDogs[0]
+                                                    );
+                                                }
+                                            "
                                         />
                                         <div
                                             v-show="isSearchFocused"
@@ -471,11 +482,15 @@ const handleSearchBlur = () => {
                                                 v-for="dog in dogSearchFilteredDogs"
                                                 :key="dog.id"
                                                 class="flex items-center p-2 gap-2 hover:bg-gray-200 hover:cursor-pointer"
-                                                @click.prevent="
-                                                    addDogRelationship(
-                                                        index,
-                                                        dog
-                                                    )
+                                                @mousedown.prevent="
+                                                    () => {
+                                                        addDogRelationship(
+                                                            index,
+                                                            dog
+                                                        );
+
+                                                        isSearchFocused = false;
+                                                    }
                                                 "
                                             >
                                                 {{ dog.nickname }}

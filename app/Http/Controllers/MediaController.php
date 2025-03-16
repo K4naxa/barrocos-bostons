@@ -51,7 +51,7 @@ class MediaController extends Controller
                 'images.*.title' => 'required|string|max:255',
                 'images.*.alt_text' => 'required|string|max:255',
                 'images.*.dog_relationships' => 'array',
-                'images.*.dog_relationships.*' => 'exists:dogs,id',
+                'images.*.dog_relationships.*.dog_id' => 'exists:dogs,id',
                 'images.*.dog_relationships.*.is_secondary' => 'boolean',
                 'images.*.dog_relationships.*.is_primary' => 'boolean',
                 'images.*.dog_relationships.*.is_public' => 'boolean',
@@ -89,24 +89,27 @@ class MediaController extends Controller
 
 
                 // Check dog assosiations
-                // if (isset($item['dog_relationships']) && isArray($item['dog_relationships'])) {
+                if (isset($item['dog_relationships']) && is_array($item['dog_relationships'])) {
 
-                //     foreach ($item['dog_relationships'] as $relationship) {
+                    foreach ($item['dog_relationships'] as $relationship) {
 
-                //         $dogId = $relationship['dog_id'];
-                //         $dog = Dog::find($dogId);
+                        $dogId = $relationship['dog_id'];
+                        $dog = Dog::find($dogId);
 
-                //         // Create the relationship in the pivot table
-                //         $dog->galleryImages()->attach($galleryImage->id, [
-                //             'is_secondary' => $relationship['is_secondary'] ?? false,
-                //         ]);
+                        // Check if dog exists before attempting operations
+                        if ($dog) {
+                            // Create the relationship in the pivot table
+                            $dog->images()->attach($image->id, [
+                                'is_secondary' => $relationship['is_secondary'] ?? false,
+                            ]);
 
-                //         // If this is marked as a primary image, update the dog record
-                //         if ($relationship['is_primary']) {
-                //             $dog->update(['primary_image_id' => $galleryImage->id]);
-                //         }
-                //     }
-                // }
+                            // If this is marked as a primary image, update the dog record
+                            if (isset($relationship['is_primary']) && $relationship['is_primary']) {
+                                $dog->update(['primary_image_id' => $image->id]);
+                            }
+                        }
+                    }
+                }
             };
 
             return response()->json([
@@ -118,6 +121,24 @@ class MediaController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to upload media',
+                'error' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroy(Image $image)
+    {
+        try {
+            $image->delete();
+            return response()->json([
+                'success' => true
+            ]);
+        } catch (\Throwable $th) {
+            error_log($th);
+            return response()->json([
+                'success' => false,
+                'message' => '
+                    ',
                 'error' => $th->getMessage(),
             ], 500);
         }

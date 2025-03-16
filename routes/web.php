@@ -39,6 +39,7 @@ Route::prefix('/api')->middleware('auth')->group(function () {
     // Tallenna luotu koira
     Route::post('/dog/store', [DogController::class, 'store'])->name('dog.store');
     Route::post('/media/store', [MediaController::class, 'upload'])->name('media.upload');
+    Route::delete('/images/{image}', [MediaController::class, 'destroy'])->name('images.destroy');
 });
 
 Route::middleware('auth')->group(function () {

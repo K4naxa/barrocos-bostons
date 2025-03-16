@@ -22,6 +22,7 @@ interface Dog {
     name: string;
     nickname: string;
     birthday: string;
+    breed: string;
     gender: "male" | "female";
     dog_group: "males" | "females" | "memoriam" | "not_own";
     pedigree_url: string;
@@ -34,6 +35,7 @@ const newDog = ref<Dog>({
     name: "",
     nickname: "",
     birthday: "",
+    breed: "Boston Terrier",
     gender: "male",
     dog_group: "not_own",
     pedigree_url: "",
@@ -134,6 +136,7 @@ const resetForm = () => {
         name: "",
         nickname: "",
         birthday: "",
+        breed: "Boston Terrier",
         gender: "male",
         dog_group: "not_own",
         pedigree_url: "",
@@ -177,6 +180,26 @@ const resetForm = () => {
                 <input
                     id="name"
                     v-model="newDog.name"
+                    type="text"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    :class="{ 'border-red-500': errors.name }"
+                />
+                <span v-if="errors.name" class="text-red-500 text-sm">{{
+                    errors.name
+                }}</span>
+            </div>
+
+            <!-- Breed -->
+            <div>
+                <label
+                    for="breed"
+                    class="block text-sm font-medium text-gray-700"
+                >
+                    Rotu</label
+                >
+                <input
+                    id="breed"
+                    v-model="newDog.breed"
                     type="text"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     :class="{ 'border-red-500': errors.name }"
@@ -322,7 +345,7 @@ const resetForm = () => {
                             class="form-input"
                         />
                         <button
-                            @click="addOwner"
+                            @mousedown.prevent="addOwner"
                             class="px-3 py-1 bg-green-500 text-white rounded"
                         >
                             Lisää

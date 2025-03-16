@@ -29,7 +29,6 @@ class Image extends Model implements HasMedia
         $this->addMediaConversion('thumb')
             ->width(200)
             ->height(200)
-            ->sharpen(10)
             ->optimize()
             ->nonQueued();
 
@@ -37,8 +36,19 @@ class Image extends Model implements HasMedia
         $this->addMediaConversion('medium')
             ->width(800)
             ->height(600)
-            ->sharpen(10)
             ->optimize()
             ->nonQueued();
+    }
+
+    public function dogs()
+    {
+        return $this->belongsToMany(Dog::class, 'dog_images')
+            ->using(DogImage::class)
+            ->withTimestamps();
+    }
+
+    public function primaryFor()
+    {
+        return $this->hasMany(Dog::class, 'primary_image_id');
     }
 }
