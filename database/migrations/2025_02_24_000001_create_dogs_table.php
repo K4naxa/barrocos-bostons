@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('birthday');
             $table->string('breed');
             $table->enum('gender', ['male', 'female']);
+            $table->foreignId('primary_image_id')->nullable()->constrained('images')->nullOnDelete();
             $table->string('pedigree_url')->nullable();
             $table->foreignId('group_id')->constrained('dog_group_types');
             $table->timestamps();
@@ -31,9 +32,8 @@ return new class extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        if (Schema::hasTable('dogs')) {
-            Schema::dropIfExists('dogs');
-        }
+        Schema::dropIfExists('dogs');
+
 
         Schema::enableForeignKeyConstraints();
     }
