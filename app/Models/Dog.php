@@ -17,6 +17,7 @@ class Dog extends Model
         'nickname',
         'birthday',
         'gender',
+        'breed',
         'pedigree_url',
         'group_id',
         'primary_image_id'

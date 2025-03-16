@@ -15,6 +15,7 @@ class DogFactory extends Factory
             'name' => $this->faker->firstName,
             'nickname' => $this->faker->word,
             'birthday' => $this->faker->date(),
+            'breed' => 'Boston Terrier',
             'gender' => $this->faker->randomElement(['male', 'female']),
             'pedigree_url' => $this->faker->url,
             'group_id' => $this->faker->randomElement([1, 2, 3, 4]),
