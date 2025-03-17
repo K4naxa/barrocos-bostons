@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import ManagementLayout from "../../Layouts/ManagementLayout.vue";
-
-import TextInput from "../../Components/TextInput.vue";
+import TextInput from "./TextInput.vue";
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import UploadIcon from "@/Icons/UploadIcon.vue";
 import QuestionIcon from "@/Icons/QuestionIcon.vue";
-defineOptions({ layout: ManagementLayout });
+
+const props = defineProps<{
+    showNewMediaModal: boolean;
+}>();
 
 interface Dog {
     id: number;
@@ -14,9 +15,6 @@ interface Dog {
     nickname: string;
 }
 
-const props = defineProps<{
-    dogs: Dog[];
-}>();
 interface DogRelationship {
     dog_id: number;
     is_primary: boolean;
@@ -51,9 +49,27 @@ const newDogRelationsip = ref<Partial<DogRelationship>>({
 
 // newMedia holds all the media for upload
 const newMedia = ref<Image[]>([]);
+const dogs = ref<Dog[]>([]);
+
 // errors to be displayed
 const errors = ref<any>({});
 const is_loading = ref<boolean>(false);
+
+const fetchDogs = async () => {
+    try {
+        const response = await axios.get("/api/dog/dognames");
+        console.log(response.data);
+        dogs.value = Array.isArray(response.data)
+            ? response.data
+            : [response.data];
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+onMounted(() => {
+    fetchDogs();
+});
 
 // Form submission handler
 const handleSubmit = async () => {
@@ -107,6 +123,7 @@ const handleSubmit = async () => {
 
         // Optionally reset form
         newMedia.value = [];
+        props.showNewMediaModal = false;
     } catch (error) {
         console.error("Error uploading media:", error);
     } finally {
@@ -210,9 +227,9 @@ const onDragEnter = (event: DragEvent) => {
 };
 
 const dogSearchInput = ref<string>("");
-const isSearchFocused = ref(false);
+const isSearchFocused = ref<number | null>(null);
 const dogSearchFilteredDogs = computed((): Dog[] => {
-    let filteredDogs: Dog[] = props.dogs.filter(
+    let filteredDogs: Dog[] = dogs.value.filter(
         (d: Dog) =>
             d.name.toLowerCase().includes(dogSearchInput.value.toLowerCase()) ||
             d.nickname
@@ -221,15 +238,10 @@ const dogSearchFilteredDogs = computed((): Dog[] => {
     );
     return filteredDogs;
 });
-const handleSearchBlur = () => {
-    setTimeout(() => {
-        isSearchFocused.value = false;
-    }, 100);
-};
 </script>
 
 <template>
-    <div class="max-w-4xl mx-auto p-4">
+    <div class="max-w-4xl mx-auto p-4 bg-white rounded-md shadow-md">
         <h1 class="text-2xl font-bold mb-4">Tuo uusia kuvia</h1>
 
         <form @submit.prevent="handleSubmit" class="space-y-6">
@@ -380,7 +392,7 @@ const handleSearchBlur = () => {
                             </div>
 
                             <!-- Dog Relationships -->
-                            <div v-if="props.dogs && props.dogs.length > 0">
+                            <div v-if="dogs && dogs.length > 0">
                                 <h3
                                     class="text-sm font-medium text-gray-700 mb-1"
                                 >
@@ -460,8 +472,8 @@ const handleSearchBlur = () => {
                                             v-model="dogSearchInput"
                                             placeholder="Etsi koiria..."
                                             class="w-full"
-                                            @focus="isSearchFocused = true"
-                                            @blur="isSearchFocused = false"
+                                            @focus="isSearchFocused = index"
+                                            @blur="isSearchFocused = null"
                                             @keydown.enter.prevent="
                                                 if (
                                                     dogSearchFilteredDogs.length >
@@ -475,7 +487,7 @@ const handleSearchBlur = () => {
                                             "
                                         />
                                         <div
-                                            v-show="isSearchFocused"
+                                            v-show="isSearchFocused == index"
                                             class="mt-2 max-h-60 overflow-auto absolute bg-white border rounded-md w-full z-10"
                                         >
                                             <div
@@ -489,7 +501,7 @@ const handleSearchBlur = () => {
                                                             dog
                                                         );
 
-                                                        isSearchFocused = false;
+                                                        isSearchFocused = null;
                                                     }
                                                 "
                                             >

@@ -9,6 +9,15 @@ use Inertia\Inertia;
 
 class DogController extends Controller
 {
+
+
+    public function getDogNames(Request $request)
+    {
+        $dogs = Dog::select('id', 'name', 'nickname')->get();
+        return response()->json($dogs);
+    }
+
+
     public function create()
     {
         error_log('trying to open create dog');

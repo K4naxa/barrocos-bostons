@@ -30,14 +30,13 @@ Route::middleware('auth')->group(function () {
     // Uuden koiran luomis sivu
     Route::get('/hallinta/koira/uusi', [DogController::class, 'create'])->name('dog.create');
 
-    Route::get('/hallinta/kuvat/uusi', [MediaController::class, 'create'])->name('media.create');
-
     Route::get('/hallinta/kuvat', [MediaController::class, 'managementGallery'])->name('admin.managementGallery');
 });
 
 Route::prefix('/api')->middleware('auth')->group(function () {
     // Tallenna luotu koira
     Route::post('/dog/store', [DogController::class, 'store'])->name('dog.store');
+    Route::get('/dog/dognames', [DogController::class, 'getDogNames'])->name('dog.dognames');
     Route::post('/media/store', [MediaController::class, 'upload'])->name('media.upload');
     Route::delete('/images/{image}', [MediaController::class, 'destroy'])->name('images.destroy');
 });

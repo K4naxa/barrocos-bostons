@@ -4,8 +4,15 @@ import { ref, defineProps, onMounted, computed } from "vue";
 import axios from "axios";
 import TextInput from "../../Components/TextInput.vue";
 import SecondaryButton from "../../Components/SecondaryButton.vue";
+import PrimaryButton from "../../Components/PrimaryButton.vue";
+import UploadNewMedia from "../../Components/UploadNewMedia.vue";
 defineOptions({ layout: ManagementLayout });
 
+// UI Elements
+const showNewMediaModal = ref<boolean>(false);
+const selectedImage = ref<Image | null>(null);
+
+// OBJECTS
 interface Image {
     id: number;
     title: string;
@@ -16,12 +23,15 @@ interface Image {
     medium: string;
 }
 
-const selectedImage = ref<Image | null>(null);
-
+// PROPS
 const props = defineProps<{
     images: Image[];
 }>();
 
+/*
+ * Sends delete request for given image id.
+ *
+ */
 const deleteImage = async (id: number) => {
     try {
         await axios.delete(`/api/images/${id}`);
@@ -40,15 +50,23 @@ onMounted(() => {
     <div
         class="mx-auto w-full relative sm:rounded-lg lg:my-8 max-h-full overflow-auto p-8"
     >
-        <div class="mb-8 bg-gray-200 rounded-t-md">
-            <label for="showAll" class="mr-2">Näytä kaikki</label>
-            <input type="checkbox" name="showAll" id="showAll" labe />
+        <!-- Header -->
+        <div class="mb-8 bg-gray-200 rounded-md flex gap-8 px-4 py-2">
+            <div>
+                <label for="showAll" class="mr-2">Näytä kaikki</label>
+                <input type="checkbox" name="showAll" id="showAll" labe />
+            </div>
+            <PrimaryButton
+                @click.prevent="showNewMediaModal = true"
+                class="ml-auto"
+                >Tuo Kuvia</PrimaryButton
+            >
         </div>
 
         <!-- Main window -->
         <div class="w-full relative">
             <!-- images -->
-            <div class="w-full pr-96 flex gap-4 flex-wrap">
+            <div class="w-full pr-72 flex gap-4 flex-wrap">
                 <div
                     v-for="image in props.images"
                     :key="image.id"
@@ -65,7 +83,7 @@ onMounted(() => {
             </div>
             <!-- right control window -->
             <div
-                class="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-200 lg:w-96 p-4 shadow-lg rounded-md overflow-auto max-h-screen"
+                class="fixed right-4 top-1/2 transform -translate-y-1/2 bg-gray-200 lg:w-72 p-4 shadow-lg rounded-md overflow-auto max-h-screen"
             >
                 <div v-if="selectedImage">
                     <img
@@ -129,6 +147,16 @@ onMounted(() => {
                     >
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div
+        v-if="showNewMediaModal"
+        class="absolute flex h-dvh w-dvw bg-gray-900 bg-opacity-40 backdrop-blur-sm justify-center items-center top-0 left-0 z-20"
+        @click.self="showNewMediaModal = false"
+    >
+        <div class="md:max-h-[80%] overflow-auto bg-white rounded-md shadow-md">
+            <UploadNewMedia :showNewMediaModal="showNewMediaModal" />
         </div>
     </div>
 </template>

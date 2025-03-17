@@ -32,13 +32,6 @@ import AuthenticatedLayout from "./AuthenticatedLayout.vue";
                 </Link>
                 <Link
                     class="navlink"
-                    :class="{ active: route().current('media.create') }"
-                    :href="route('media.create')"
-                >
-                    Tuo mediaa
-                </Link>
-                <Link
-                    class="navlink"
                     :class="{
                         active: route().current('admin.managementGallery'),
                     }"

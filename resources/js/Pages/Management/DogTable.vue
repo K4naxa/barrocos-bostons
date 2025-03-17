@@ -3,6 +3,7 @@ import AuthenticatedLayout from "../../Layouts/AuthenticatedLayout.vue";
 import ManagementLayout from "../../Layouts/ManagementLayout.vue";
 import { ref, defineProps, onMounted, computed } from "vue";
 import TextInput from "../../Components/TextInput.vue";
+import PrimaryButton from "../../Components/PrimaryButton.vue";
 import SecondaryButton from "../../Components/SecondaryButton.vue";
 defineOptions({ layout: ManagementLayout });
 
@@ -60,6 +61,7 @@ onMounted(() => {
     <div
         class="max-w-5xl mx-auto w-full relative sm:rounded-lg lg:my-8 max-h-full"
     >
+        <!-- Header -->
         <div class="flex gap-8 px-4 py-2">
             <div class="">
                 <label for="table-search" class="sr-only">Hae</label>
@@ -141,7 +143,10 @@ onMounted(() => {
                     </option>
                 </select>
             </div>
+            <PrimaryButton class="ml-auto">Luo Koira</PrimaryButton>
         </div>
+
+        <!-- Main section -->
         <table
             class="w-full text-sm text-left rtl:text-right text-gray-500 overflow-auto"
         >

@@ -14,7 +14,9 @@ class MediaController extends Controller
 
     public function managementGallery()
     {
-        $images = Image::get()
+        $images = Image::with(['dogs' => function ($query) {
+            $query->withPivot('is_secondary');
+        }])->get()
             ->map(function ($image) {
                 return [
                     'id' => $image->id,
@@ -24,6 +26,15 @@ class MediaController extends Controller
                     'url' => $image->getFirstMediaUrl('gallery'),
                     'thumbnail' => $image->getFirstMediaUrl('gallery', 'thumb'),
                     'medium' => $image->getFirstMediaUrl('gallery', 'medium'),
+                    'dogs' => $image->dogs->map(function ($dog) use ($image) {
+                        return [
+                            'id' => $dog->id,
+                            'name' => $dog->name,
+                            'nickname' => $dog->nickname,
+                            'is_secondary' => $dog->pivot->is_secondary ?? false,
+                            'is_primary' => $dog->primary_image_id === $image->id
+                        ];
+                    })
                 ];
             });
 
@@ -32,13 +43,7 @@ class MediaController extends Controller
         ]);
     }
 
-    public function create(Request $request)
-    {
-        $dogs = Dog::select('id', 'name', 'nickname')->get();
-        return Inertia::render('Management/MediaCreate', [
-            'dogs' => $dogs
-        ]);
-    }
+
     public function upload(Request $request)
     {
         try {
