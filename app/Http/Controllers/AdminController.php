@@ -26,8 +26,24 @@ class AdminController extends Controller
             'nickname',
             'birthday',
             'gender',
-            'group_id'
-        )->with(['owners', 'group:id,name'])->get();
+            'group_id',
+            'primary_image_id'
+        )->with(['owners', 'group:id,name'])->get()
+            ->map(function ($dog) {
+                return [
+                    'id' => $dog->id,
+                    'name' => $dog->name,
+                    'nickname' => $dog->nickname,
+                    'birthday' => $dog->birthday,
+                    'gender' => $dog->gender,
+                    'group' => $dog->group,
+                    'url' => $dog->primaryImage ? $dog->primaryImage->getFirstMediaUrl('gallery') : '',
+                    'thumbnail' => $dog->primaryImage ? $dog->primaryImage->getFirstMediaUrl('gallery', 'thumb') : '',
+                    'medium' => $dog->primaryImage ? $dog->primaryImage->getFirstMediaUrl('gallery', 'medium') : '',
+                ];
+            });
+
+
         return Inertia::render('Management/DogTable', [
             'dogs' => $dogs
         ]);

@@ -6,26 +6,22 @@ import TextInput from "../../Components/TextInput.vue";
 import SecondaryButton from "../../Components/SecondaryButton.vue";
 defineOptions({ layout: ManagementLayout });
 
-interface Owner {
-    id: number;
-    name: string;
-}
-
-interface MedicalExamination {
-    id: number;
-    date: string;
-    description: string;
-}
-
 interface Dog {
     name: string;
     nickname: string;
     birthday: string;
     gender: "male" | "female";
     pedigree_url: string;
-    owners: Owner[];
-    medical_examinations: MedicalExamination[];
+    owners: { id: number; name: string }[];
+    medical_examinations: { id: number; date: string; description: string }[];
     dog_group: string;
+    thumbnail: string | undefined;
+    medium: string | undefined;
+    original: string | undefined;
+    group: {
+        id: number;
+        name: string;
+    };
 }
 
 const props = defineProps<{
@@ -62,7 +58,7 @@ onMounted(() => {
 </script>
 <template>
     <div
-        class="max-w-5xl mx-auto w-full relative sm:rounded-lg lg:my-8 max-h-full overflow-auto"
+        class="max-w-5xl mx-auto w-full relative sm:rounded-lg lg:my-8 max-h-full"
     >
         <div class="flex gap-8 px-4 py-2">
             <div class="">
@@ -104,11 +100,7 @@ onMounted(() => {
                     :class="{ 'text-gray-500': filterGroup === 'all' }"
                     v-model="filterGroup"
                 >
-                    <option
-                        selected="Valitse ryhmä"
-                        value="all"
-                        class="text-gray-500"
-                    >
+                    <option selected value="all" class="text-gray-500">
                         Valitse Ryhmä
                     </option>
                     <option
@@ -150,26 +142,37 @@ onMounted(() => {
                 </select>
             </div>
         </div>
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+        <table
+            class="w-full text-sm text-left rtl:text-right text-gray-500 overflow-auto"
+        >
             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                <th scope="col" class="px-6 py-3">Kutsumanimi</th>
-                <th scope="col" class="px-6 py-3">Virallinen nimi</th>
-                <th scope="col" class="px-6 py-3">Syntymäpäivä</th>
-                <th scope="col" class="px-6 py-3">Sukupuoli</th>
-                <th scope="col" class="px-6 py-3">Ryhmä</th>
-                <th scope="col" class="px-6 py-3"></th>
+                <th scope="col" class="px-4 py-2">Kuva</th>
+                <th scope="col" class="px-4 py-2">Kutsumanimi</th>
+                <th scope="col" class="px-4 py-2">Virallinen nimi</th>
+                <th scope="col" class="px-4 py-2">Syntymäpäivä</th>
+                <th scope="col" class="px-4 py-2">Sukupuoli</th>
+                <th scope="col" class="px-4 py-2">Ryhmä</th>
+                <th scope="col" class="px-4 py-2"></th>
             </thead>
             <tbody>
                 <tr
                     v-for="dog in filteredBySearch"
                     class="bg-white border-b border-gray-200 hover:bg-gray-50"
                 >
-                    <td class="px-6 py-4">{{ dog.nickname }}</td>
-                    <td class="px-6 py-4">{{ dog.name }}</td>
-                    <td class="px-6 py-4">{{ dog.birthday }}</td>
-                    <td class="px-6 py-4">{{ dog.gender }}</td>
-                    <td class="px-6 py-4">
-                        {{ dog.group.name }}
+                    <td class="max-h-20">
+                        <img
+                            v-if="dog.thumbnail"
+                            :src="dog.thumbnail"
+                            alt="kuvat koirasta"
+                            class="max-h-16"
+                        />
+                    </td>
+                    <td class="px-4 py-2">{{ dog.nickname }}</td>
+                    <td class="px-4 py-2">{{ dog.name }}</td>
+                    <td class="px-4 py-2">{{ dog.birthday }}</td>
+                    <td class="px-4 py-2">{{ dog.gender }}</td>
+                    <td class="px-4 py-2">
+                        {{ dog.group?.name }}
                     </td>
                     <td class="px-6 py-4 flex gap-2">
                         <SecondaryButton class="">Näytä</SecondaryButton>

@@ -7,8 +7,6 @@ use App\Models\Image;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-use function PHPUnit\Framework\isArray;
-
 class MediaController extends Controller
 {
 
